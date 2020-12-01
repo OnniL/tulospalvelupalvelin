@@ -489,10 +489,10 @@ app.post('/api/newgame', function (req, res) {
 
 
 
+const port = process.env.PORT || 3000;
 
-let server = app.listen(8080, function () {
+let server = app.listen(port, function () {
   let host = server.address().address;
-  let port = server.address().port;
 
   console.log("Example app listening at http://%s:%s", host, port)
 });
