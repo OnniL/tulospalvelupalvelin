@@ -10,10 +10,10 @@ let util = require('util');
 let mysql = require('mysql');
 
 let con = mysql.createConnection({
-  host: "mysql.metropolia.fi",
-  user: "onnilu",
-  password: "tietoonnilukanta",
-  database: "onnilu"
+  host: "eu-cdbr-west-03.cleardb.net",
+  user: "bc2d76b34dd02e",
+  password: "012b2e53",
+  database: "heroku_b0cb4b903fd386b"
 });
 
 
@@ -22,7 +22,7 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json());
 
 
-// parametrien kirjoitustapa selaimessa : http://localhost:8080/api/players?group=asd
+// parametrien kirjoitustapa selaimessa : http://localhost:8080/api/players?group=Sikailijat
 app.get("/api/players", function (req, res) {
   console.log("Get players from a certain group");
   let q = url.parse(req.url, true).query;
@@ -30,11 +30,11 @@ app.get("/api/players", function (req, res) {
   let alteredResult;
   let string;
 
-  let sql = "SELECT Pelaajat.nimi, Statistiikat.pelatutlkm, Statistiikat.voitotlkm"
-      + " FROM Pelaajat, Statistiikat, Ryhmat"
-      + " WHERE Pelaajat.ryhmaid = Ryhmat.ryhmaid and Ryhmat.nimi = ? and"
-      + " Pelaajat.pelaajaid = Statistiikat.pelaajaid"
-      + " ORDER BY Pelaajat.nimi";
+  let sql = "SELECT pelaajat.nimi, statistiikat.pelatutlkm, statistiikat.voitotlkm"
+      + " FROM pelaajat, statistiikat, ryhmat"
+      + " WHERE pelaajat.ryhmaid = ryhmat.ryhmaid and ryhmat.nimi = ? and"
+      + " pelaajat.pelaajaid = statistiikat.pelaajaid"
+      + " ORDER BY pelaajat.nimi";
 
   const query = util.promisify(con.query).bind(con);
 
@@ -58,7 +58,7 @@ app.get("/api/players", function (req, res) {
 });
 
 
-// parametrien kirjoitustapa selaimessa : http://localhost:8080/api/login?group=asd&password=asd
+// parametrien kirjoitustapa selaimessa : http://localhost:8080/api/login?group=Sikailijat&password=asd
 app.get("/api/login", function (req, res) {
   console.log("Checks your group");
   let q = url.parse(req.url, true).query;
@@ -67,9 +67,9 @@ app.get("/api/login", function (req, res) {
   let alteredResult;
   let string;
 
-  let sql = "SELECT Ryhmat.nimi"
-      + " FROM Ryhmat"
-      + " WHERE Ryhmat.nimi = ? and Ryhmat.salasana = ?";
+  let sql = "SELECT ryhmat.nimi"
+      + " FROM ryhmat"
+      + " WHERE ryhmat.nimi = ? and ryhmat.salasana = ?";
 
   const query = util.promisify(con.query).bind(con);
 
@@ -100,13 +100,13 @@ app.get("/api/player", function (req, res) {
   let alteredResult;
   let string;
 
-  let sql = "SELECT Pelaajat.nimi, Statistiikat.pelatutlkm, Statistiikat.voitotlkm,"
-      + " Statistiikat.p, Statistiikat.1p, Statistiikat.2p, Statistiikat.3p, Statistiikat.4p,"
-      + " Statistiikat.5p, Statistiikat.6p, Statistiikat.7p, Statistiikat.8p, Statistiikat.9p,"
-      + " Statistiikat.10p, Statistiikat.11p, Statistiikat.12p"
-      + " FROM Pelaajat, Statistiikat, Ryhmat"
-      + " WHERE Pelaajat.ryhmaid = Ryhmat.ryhmaid and Ryhmat.nimi = ? and"
-      + " Pelaajat.pelaajaid = Statistiikat.pelaajaid and Pelaajat.nimi = ?";
+  let sql = "SELECT pelaajat.nimi, statistiikat.pelatutlkm, statistiikat.voitotlkm,"
+      + " statistiikat.p, statistiikat.1p, statistiikat.2p, statistiikat.3p, statistiikat.4p,"
+      + " statistiikat.5p, statistiikat.6p, statistiikat.7p, statistiikat.8p, statistiikat.9p,"
+      + " statistiikat.10p, statistiikat.11p, statistiikat.12p"
+      + " FROM pelaajat, statistiikat, ryhmat"
+      + " WHERE pelaajat.ryhmaid = ryhmat.ryhmaid and ryhmat.nimi = ? and"
+      + " pelaajat.pelaajaid = statistiikat.pelaajaid and pelaajat.nimi = ?";
 
   const query = util.promisify(con.query).bind(con);
 
@@ -138,11 +138,11 @@ app.get("/api/games", function (req, res) {
   let alteredResult;
   let string;
 
-  let sql = "SELECT Pelit.pvm, Pelaajat.nimi"
-      + " FROM Pelit, Ryhmat, Pelaajat"
-      + " WHERE Pelit.ryhmaid = Ryhmat.ryhmaid and Ryhmat.nimi = ?"
-      + " and Pelaajat.pelaajaid = Pelit.voittajaid"
-      + " ORDER BY Pelit.pvm";
+  let sql = "SELECT pelit.pvm, pelaajat.nimi"
+      + " FROM pelit, ryhmat, pelaajat"
+      + " WHERE pelit.ryhmaid = ryhmat.ryhmaid and ryhmat.nimi = ?"
+      + " and pelaajat.pelaajaid = pelit.voittajaid"
+      + " ORDER BY pelit.pvm";
 
   const query = util.promisify(con.query).bind(con);
 
@@ -171,7 +171,7 @@ app.post('/api/newgroup', function (req, res) {
   const query = util.promisify(con.query).bind(con);
   let jsonOBJ = req.body;
   console.log(jsonOBJ);
-  let sqlquery = "SELECT nimi FROM Ryhmat";
+  let sqlquery = "SELECT nimi FROM ryhmat";
   (async () => {
     try {
       const rows = await query(sqlquery);
@@ -183,7 +183,7 @@ app.post('/api/newgroup', function (req, res) {
         }
       }
       if (equals === false){
-        sqlquery = "INSERT INTO Ryhmat (nimi, salasana) VALUES (?, ?)"
+        sqlquery = "INSERT INTO ryhmat (nimi, salasana) VALUES (?, ?)"
         await query(sqlquery,[jsonOBJ.nimi, jsonOBJ.salasana]);
         res.send("Post successful" + req.body);
       }
@@ -207,11 +207,11 @@ app.post('/api/newplayer', function (req, res) {
   let jsonOBJ = req.body;
   console.log(jsonOBJ);
   let ryhmaid;
-  let sqlquery = "SELECT ryhmaid FROM Ryhmat WHERE nimi = ?";
+  let sqlquery = "SELECT ryhmaid FROM ryhmat WHERE nimi = ?";
   (async () => {
     try {
       ryhmaid = await query(sqlquery,[jsonOBJ.ryhman_nimi]);
-      sqlquery = "SELECT nimi FROM Pelaajat WHERE ryhmaid = ?";
+      sqlquery = "SELECT nimi FROM pelaajat WHERE ryhmaid = ?";
       const rows = await query(sqlquery,[ryhmaid[0].ryhmaid]);
       console.log(ryhmaid);
       console.log(rows);
@@ -222,9 +222,9 @@ app.post('/api/newplayer', function (req, res) {
         }
       }
       if (equals === false){
-        sqlquery = "INSERT INTO Pelaajat (nimi, ryhmaid) VALUES (?, ?)";
+        sqlquery = "INSERT INTO pelaajat (nimi, ryhmaid) VALUES (?, ?)";
         await query(sqlquery,[jsonOBJ.pelaajan_nimi, ryhmaid[0].ryhmaid]);
-        sqlquery = "INSERT INTO Statistiikat (voitotlkm) VALUES (0)";
+        sqlquery = "INSERT INTO statistiikat (voitotlkm) VALUES (0)";
         res.send("Post successful" + req.body);
       }
       else{
@@ -249,26 +249,26 @@ app.post('/api/newgame', function (req, res) {
   let ryhmaid;
   let voittajaid;
   let pelaajaid;
-  let sqlquery = "SELECT ryhmaid FROM Ryhmat WHERE nimi = ?";
+  let sqlquery = "SELECT ryhmaid FROM ryhmat WHERE nimi = ?";
   (async () => {
     try {
       ryhmaid = await query(sqlquery,[jsonOBJ.ryhman_nimi]);
 
-      sqlquery = "SELECT pelaajaid FROM Pelaajat WHERE nimi = ? and ryhmaid = ?";
+      sqlquery = "SELECT pelaajaid FROM pelaajat WHERE nimi = ? and ryhmaid = ?";
       voittajaid = await query(sqlquery,[jsonOBJ.voittajan_nimi, ryhmaid[0].ryhmaid]);
 
-      sqlquery = "INSERT INTO Pelit (ryhmaid, voittajaid, pvm) VALUES (?, ?, ?)";
+      sqlquery = "INSERT INTO pelit (ryhmaid, voittajaid, pvm) VALUES (?, ?, ?)";
       await query(sqlquery,[ryhmaid[0].ryhmaid, voittajaid[0].pelaajaid, jsonOBJ.pvm]);
       res.send("Post successful" + req.body);
 
-      let sqlqueryVoitto = "UPDATE Statistiikat SET pelatutlkm = pelatutlkm + 1, "
+      let sqlqueryVoitto = "UPDATE statistiikat SET pelatutlkm = pelatutlkm + 1, "
           + "voitotlkm = voitotlkm + 1, p = p + ?, 1p = 1p + ?, "
           + "2p = 2p + ?, 3p = 3p + ?, 4p = 4p + ?, 5p = 5p + ?, "
           + "6p = 6p + ?, 7p = 7p + ?, 8p = 8p + ?, 9p = 9p + ?,"
           + " 10p = 10p + ?, 11p = 11p + ?, 12p = 12p + ? "
           + "WHERE pelaajaid = ?";
 
-      let sqlqueryHavio = "UPDATE Statistiikat SET pelatutlkm = pelatutlkm + 1, "
+      let sqlqueryHavio = "UPDATE statistiikat SET pelatutlkm = pelatutlkm + 1, "
           + "p = p + ?, 1p = 1p + ?, "
           + "2p = 2p + ?, 3p = 3p + ?, 4p = 4p + ?, 5p = 5p + ?, "
           + "6p = 6p + ?, 7p = 7p + ?, 8p = 8p + ?, 9p = 9p + ?,"
@@ -278,7 +278,7 @@ app.post('/api/newgame', function (req, res) {
 
 
       if(jsonOBJ.pelaaja1.nimi !== ""){
-        sqlquery = "SELECT pelaajaid FROM Pelaajat WHERE nimi = ? and ryhmaid = ?";
+        sqlquery = "SELECT pelaajaid FROM pelaajat WHERE nimi = ? and ryhmaid = ?";
         pelaajaid = await query(sqlquery,[jsonOBJ.pelaaja1.nimi, ryhmaid[0].ryhmaid]);
         if(voittajaid[0].pelaajaid === pelaajaid[0].pelaajaid){
         console.log("p1voitto");
@@ -298,7 +298,7 @@ app.post('/api/newgame', function (req, res) {
       }
 
       if(jsonOBJ.pelaaja2.nimi !== ""){
-        sqlquery = "SELECT pelaajaid FROM Pelaajat WHERE nimi = ? and ryhmaid = ?";
+        sqlquery = "SELECT pelaajaid FROM pelaajat WHERE nimi = ? and ryhmaid = ?";
         pelaajaid = await query(sqlquery,[jsonOBJ.pelaaja2.nimi, ryhmaid[0].ryhmaid]);
         if(voittajaid[0].pelaajaid === pelaajaid[0].pelaajaid){
 
@@ -319,7 +319,7 @@ app.post('/api/newgame', function (req, res) {
 
 
       if(jsonOBJ.pelaaja3.nimi !== ""){
-        sqlquery = "SELECT pelaajaid FROM Pelaajat WHERE nimi = ? and ryhmaid = ?";
+        sqlquery = "SELECT pelaajaid FROM pelaajat WHERE nimi = ? and ryhmaid = ?";
         pelaajaid = await query(sqlquery,[jsonOBJ.pelaaja3.nimi, ryhmaid[0].ryhmaid]);
 
         if(voittajaid[0].pelaajaid === pelaajaid[0].pelaajaid){
@@ -339,7 +339,7 @@ app.post('/api/newgame', function (req, res) {
       }
 
       if(jsonOBJ.pelaaja4.nimi !== ""){
-        sqlquery = "SELECT pelaajaid FROM Pelaajat WHERE nimi = ? and ryhmaid = ?";
+        sqlquery = "SELECT pelaajaid FROM pelaajat WHERE nimi = ? and ryhmaid = ?";
         pelaajaid = await query(sqlquery,[jsonOBJ.pelaaja4.nimi, ryhmaid[0].ryhmaid]);
 
         if(voittajaid[0].pelaajaid === pelaajaid[0].pelaajaid){
@@ -359,7 +359,7 @@ app.post('/api/newgame', function (req, res) {
       }
 
       if(jsonOBJ.pelaaja5.nimi !== ""){
-        sqlquery = "SELECT pelaajaid FROM Pelaajat WHERE nimi = ? and ryhmaid = ?";
+        sqlquery = "SELECT pelaajaid FROM pelaajat WHERE nimi = ? and ryhmaid = ?";
         pelaajaid = await query(sqlquery,[jsonOBJ.pelaaja5.nimi, ryhmaid[0].ryhmaid]);
 
         if(voittajaid[0].pelaajaid === pelaajaid[0].pelaajaid){
@@ -379,7 +379,7 @@ app.post('/api/newgame', function (req, res) {
       }
 
       if(jsonOBJ.pelaaja6.nimi !== ""){
-        sqlquery = "SELECT pelaajaid FROM Pelaajat WHERE nimi = ? and ryhmaid = ?";
+        sqlquery = "SELECT pelaajaid FROM pelaajat WHERE nimi = ? and ryhmaid = ?";
         pelaajaid = await query(sqlquery,[jsonOBJ.pelaaja6.nimi, ryhmaid[0].ryhmaid]);
 
         if(voittajaid[0].pelaajaid === pelaajaid[0].pelaajaid){
@@ -399,7 +399,7 @@ app.post('/api/newgame', function (req, res) {
       }
 
       if(jsonOBJ.pelaaja7.nimi !== ""){
-        sqlquery = "SELECT pelaajaid FROM Pelaajat WHERE nimi = ? and ryhmaid = ?";
+        sqlquery = "SELECT pelaajaid FROM pelaajat WHERE nimi = ? and ryhmaid = ?";
         pelaajaid = await query(sqlquery,[jsonOBJ.pelaaja7.nimi, ryhmaid[0].ryhmaid]);
 
         if(voittajaid[0].pelaajaid === pelaajaid[0].pelaajaid){
@@ -419,7 +419,7 @@ app.post('/api/newgame', function (req, res) {
       }
 
       if(jsonOBJ.pelaaja8.nimi !== ""){
-        sqlquery = "SELECT pelaajaid FROM Pelaajat WHERE nimi = ? and ryhmaid = ?";
+        sqlquery = "SELECT pelaajaid FROM pelaajat WHERE nimi = ? and ryhmaid = ?";
         pelaajaid = await query(sqlquery,[jsonOBJ.pelaaja8.nimi, ryhmaid[0].ryhmaid]);
 
         if(voittajaid[0].pelaajaid === pelaajaid[0].pelaajaid){
@@ -439,7 +439,7 @@ app.post('/api/newgame', function (req, res) {
       }
 
       if(jsonOBJ.pelaaja9.nimi !== ""){
-        sqlquery = "SELECT pelaajaid FROM Pelaajat WHERE nimi = ? and ryhmaid = ?";
+        sqlquery = "SELECT pelaajaid FROM pelaajat WHERE nimi = ? and ryhmaid = ?";
         pelaajaid = await query(sqlquery,[jsonOBJ.pelaaja9.nimi, ryhmaid[0].ryhmaid]);
 
         if(voittajaid[0].pelaajaid === pelaajaid[0].pelaajaid){
@@ -459,7 +459,7 @@ app.post('/api/newgame', function (req, res) {
       }
 
       if(jsonOBJ.pelaaja10.nimi !== ""){
-        sqlquery = "SELECT pelaajaid FROM Pelaajat WHERE nimi = ? and ryhmaid = ?";
+        sqlquery = "SELECT pelaajaid FROM pelaajat WHERE nimi = ? and ryhmaid = ?";
         pelaajaid = await query(sqlquery,[jsonOBJ.pelaaja10.nimi, ryhmaid[0].ryhmaid]);
 
         if(voittajaid[0].pelaajaid === pelaajaid[0].pelaajaid){
