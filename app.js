@@ -15,7 +15,32 @@ let con = mysql.createConnection({
   password: "012b2e53",
   database: "heroku_b0cb4b903fd386b"
 });
+function handleDisconnect() {
+  con = mysql.createConnection({
+    host: "eu-cdbr-west-03.cleardb.net",
+    user: "bc2d76b34dd02e",
+    password: "012b2e53",
+    database: "heroku_b0cb4b903fd386b"
+  });
 
+  con.connect(function(err) {
+    if(err) {
+      console.log("Tietokantaan ei saatu yhteyttä: ", err);
+      setTimeout(handleDisconnect, 2000);
+    }
+  });
+
+  con.on("error", function (err) {
+    console.log("Virhe tietokannassa: ", err);
+    if(err.code === "PROTOCOL_CONNECTION_LOST") {
+      handleDisconnect();
+    }
+    else {
+      throw err;
+    }
+  })
+}
+handleDisconnect();
 
 app.use(bodyParser.urlencoded({
   extended: false }));
