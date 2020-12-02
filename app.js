@@ -116,7 +116,7 @@ app.get("/api/login", function (req, res) {
   })()
 });
 
-// parametrien kirjoitustapa selaimessa : http://localhost:8080/api/player?group=asd2&player=Onni
+// parametrien kirjoitustapa selaimessa : http://localhost:8080/api/player?group=Sikailijat&player=Onni
 app.get("/api/player", function (req, res) {
   console.log("Get stats of one player");
   let q = url.parse(req.url, true).query;
