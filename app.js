@@ -47,7 +47,7 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json());
 
 
-// parametrien kirjoitustapa selaimessa : http://localhost:8080/api/players?group=Sikailijat
+// parametrien kirjoitustapa selaimessa : http://localhost:3000/api/players?group=Sikailijat
 app.get("/api/players", function (req, res) {
   console.log("Get players from a certain group");
   let q = url.parse(req.url, true).query;
@@ -70,8 +70,6 @@ app.get("/api/players", function (req, res) {
       alteredResult = '{"numOfRows":'+rows.length+',"rows":'+string+'}';
       console.log(rows);
       res.send(alteredResult);
-
-
     }
     catch (err) {
       console.log("Database error!"+ err);
@@ -83,7 +81,7 @@ app.get("/api/players", function (req, res) {
 });
 
 
-// parametrien kirjoitustapa selaimessa : http://localhost:8080/api/login?group=Sikailijat&password=asd
+// parametrien kirjoitustapa selaimessa : http://localhost:3000/api/login?group=Sikailijat&password=asd
 app.get("/api/login", function (req, res) {
   console.log("Checks your group");
   let q = url.parse(req.url, true).query;
@@ -116,7 +114,7 @@ app.get("/api/login", function (req, res) {
   })()
 });
 
-// parametrien kirjoitustapa selaimessa : http://localhost:8080/api/player?group=Sikailijat&player=Onni
+// parametrien kirjoitustapa selaimessa : http://localhost:3000/api/player?group=Sikailijat&player=Onni
 app.get("/api/player", function (req, res) {
   console.log("Get stats of one player");
   let q = url.parse(req.url, true).query;
@@ -155,7 +153,7 @@ app.get("/api/player", function (req, res) {
 });
 
 
-// parametrien kirjoitustapa selaimessa : http://localhost:8080/api/games?group=asd
+// parametrien kirjoitustapa selaimessa : http://localhost:3000/api/games?group=asd
 app.get("/api/games", function (req, res) {
   console.log("Get list of played games");
   let q = url.parse(req.url, true).query;
@@ -190,7 +188,7 @@ app.get("/api/games", function (req, res) {
   })()
 });
 
-// parametrien kirjoitustapa selaimessa : http://localhost:8080/api/newgroup
+// parametrien kirjoitustapa selaimessa : http://localhost:3000/api/newgroup
 app.post('/api/newgroup', function (req, res) {
   console.log("Got a POST request for the homepage");
   const query = util.promisify(con.query).bind(con);
@@ -225,7 +223,7 @@ app.post('/api/newgroup', function (req, res) {
   })()
 });
 
-// parametrien kirjoitustapa selaimessa : http://localhost:8080/api/newplayer
+// parametrien kirjoitustapa selaimessa : http://localhost:3000/api/newplayer
 app.post('/api/newplayer', function (req, res) {
   console.log("Create a new player");
   const query = util.promisify(con.query).bind(con);
@@ -265,7 +263,7 @@ app.post('/api/newplayer', function (req, res) {
   })()
 });
 
-// parametrien kirjoitustapa selaimessa : http://localhost:8080/api/newgame
+// parametrien kirjoitustapa selaimessa : http://localhost:3000/api/newgame
 app.post('/api/newgame', function (req, res) {
   console.log("Got a POST request for the homepage");
   const query = util.promisify(con.query).bind(con);
