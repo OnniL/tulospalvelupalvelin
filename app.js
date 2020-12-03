@@ -248,6 +248,7 @@ app.post('/api/newplayer', function (req, res) {
         sqlquery = "INSERT INTO pelaajat (nimi, ryhmaid) VALUES (?, ?)";
         await query(sqlquery,[jsonOBJ.pelaajan_nimi, ryhmaid[0].ryhmaid]);
         sqlquery = "INSERT INTO statistiikat (voitotlkm) VALUES (0)";
+        await query(sqlquery);
         res.send("Post successful" + req.body);
       }
       else{
