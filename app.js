@@ -126,9 +126,9 @@ app.get("/api/player", function (req, res) {
   let string;
 
   let sql = "SELECT pelaajat.nimi, statistiikat.pelatutlkm, statistiikat.voitotlkm,"
-      + " statistiikat.p, statistiikat.1p, statistiikat.2p, statistiikat.3p, statistiikat.4p,"
-      + " statistiikat.5p, statistiikat.6p, statistiikat.7p, statistiikat.8p, statistiikat.9p,"
-      + " statistiikat.10p, statistiikat.11p, statistiikat.12p"
+      + " statistiikat.p0, statistiikat.p1, statistiikat.p2, statistiikat.p3, statistiikat.p4,"
+      + " statistiikat.p5, statistiikat.p6, statistiikat.p7, statistiikat.p8, statistiikat.p9,"
+      + " statistiikat.p10, statistiikat.p11, statistiikat.p12"
       + " FROM pelaajat, statistiikat, ryhmat"
       + " WHERE pelaajat.ryhmaid = ryhmat.ryhmaid and ryhmat.nimi = ? and"
       + " pelaajat.pelaajaid = statistiikat.pelaajaid and pelaajat.nimi = ?";
@@ -287,17 +287,17 @@ app.post('/api/newgame', function (req, res) {
       res.send("Post successful" + req.body);
 
       let sqlqueryVoitto = "UPDATE statistiikat SET pelatutlkm = pelatutlkm + 1, "
-          + "voitotlkm = voitotlkm + 1, p = p + ?, 1p = 1p + ?, "
-          + "2p = 2p + ?, 3p = 3p + ?, 4p = 4p + ?, 5p = 5p + ?, "
-          + "6p = 6p + ?, 7p = 7p + ?, 8p = 8p + ?, 9p = 9p + ?,"
-          + " 10p = 10p + ?, 11p = 11p + ?, 12p = 12p + ? "
+          + "voitotlkm = voitotlkm + 1, p0 = p0 + ?, p1 = p1 + ?, "
+          + "p2 = p2 + ?, p3 = p3 + ?, p4 = p4 + ?, p5 = p5 + ?, "
+          + "p6 = p6 + ?, p7 = p7 + ?, p8 = p8 + ?, p9 = p9 + ?,"
+          + " p10 = p10 + ?, p11 = p11 + ?, p12 = p12 + ? "
           + "WHERE pelaajaid = ?";
 
       let sqlqueryHavio = "UPDATE statistiikat SET pelatutlkm = pelatutlkm + 1, "
-          + "p = p + ?, 1p = 1p + ?, "
-          + "2p = 2p + ?, 3p = 3p + ?, 4p = 4p + ?, 5p = 5p + ?, "
-          + "6p = 6p + ?, 7p = 7p + ?, 8p = 8p + ?, 9p = 9p + ?,"
-          + " 10p = 10p + ?, 11p = 11p + ?, 12p = 12p + ? "
+          + "p0 = p0 + ?, p1 = p1 + ?, "
+          + "p2 = p2 + ?, p3 = p3 + ?, p4 = p4 + ?, p5 = p5 + ?, "
+          + "p6 = p6 + ?, p7 = p7 + ?, p8 = p8 + ?, p9 = p9 + ?,"
+          + " p10 = p10 + ?, p11 = p11 + ?, p12 = p12 + ? "
           + "WHERE pelaajaid = ?";
 
 
