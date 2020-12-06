@@ -560,7 +560,7 @@ let server = app.listen(port, function () {
 function textInputCheck(inputtxt)
 //Tekstisyötteen tarkistus
 {
-  let inputType = /^[A-Öa-ö]+$/;
+  let inputType = /^[A-Za-z]+$/;
   if(inputtxt.match(inputType))
   {
     return true;
