@@ -1,3 +1,6 @@
+/**
+ * Tulospalvelupalvelin
+ */
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 const bodyParser = require('body-parser');
@@ -8,13 +11,16 @@ let url = require('url');
 let util = require('util');
 
 let mysql = require('mysql');
-
 let con = mysql.createConnection({
   host: "eu-cdbr-west-03.cleardb.net",
   user: "bc2d76b34dd02e",
   password: "012b2e53",
   database: "heroku_b0cb4b903fd386b"
 });
+
+/**
+ * Mitä tehdään jos menetetään yhteys tietokantaan
+ */
 function handleDisconnect() {
   con = mysql.createConnection({
     host: "eu-cdbr-west-03.cleardb.net",
@@ -73,7 +79,12 @@ app.use(function (req, res, next) {
 
 
 // parametrien kirjoitustapa selaimessa : http://localhost:3000/api/players?group=Sikailijat
-app.get("/api/players", function (req, res) {
+
+app.get("/api/players",
+    /**
+ * Palauta pelaajat ryhmästä x
+ */
+    function (req, res) {
   console.log("Get players from a certain group");
   let q = url.parse(req.url, true).query;
   let group = q.group;
@@ -109,7 +120,11 @@ else {
 
 
 // parametrien kirjoitustapa selaimessa : http://localhost:3000/api/login?group=Sikailijat&password=asd
-app.get("/api/login", function (req, res) {
+app.get("/api/login",
+    /**
+     * Tarkista kirjautumistiedot
+     */
+    function (req, res) {
   console.log("Checks your group");
   let q = url.parse(req.url, true).query;
   let group = q.group;
@@ -144,7 +159,11 @@ else {
 });
 
 // parametrien kirjoitustapa selaimessa : http://localhost:3000/api/player?group=Sikailijat&player=Onni
-app.get("/api/player", function (req, res) {
+app.get("/api/player",
+    /**
+     * Hae pelaaja y ryhmästä x
+     */
+    function (req, res) {
   console.log("Get stats of one player");
   let q = url.parse(req.url, true).query;
   let group = q.group;
@@ -185,7 +204,11 @@ else {
 
 
 // parametrien kirjoitustapa selaimessa : http://localhost:3000/api/games?group=asd
-app.get("/api/games", function (req, res) {
+app.get("/api/games",
+    /**
+     * Hae pelit ryhmältä x
+     */
+    function (req, res) {
   console.log("Get list of played games");
   let q = url.parse(req.url, true).query;
   let group = q.group;
@@ -222,7 +245,12 @@ else {
 });
 
 // parametrien kirjoitustapa selaimessa : http://localhost:3000/api/newgroup
-app.post('/api/newgroup', function (req, res) {
+app.post('/api/newgroup',
+
+    /**
+     * Lisää uusi ryhmä
+     */
+    function (req, res) {
   console.log("Got a POST request for the homepage");
   const query = util.promisify(con.query).bind(con);
   let jsonOBJ = req.body;
@@ -259,7 +287,11 @@ app.post('/api/newgroup', function (req, res) {
 });
 
 // parametrien kirjoitustapa selaimessa : http://localhost:3000/api/newplayer
-app.post('/api/newplayer', function (req, res) {
+app.post('/api/newplayer',
+    /**
+     * Lisää uusi pelaaja ryhmään x
+     */
+    function (req, res) {
   console.log("Create a new player");
   const query = util.promisify(con.query).bind(con);
   let jsonOBJ = req.body;
@@ -302,7 +334,11 @@ app.post('/api/newplayer', function (req, res) {
 });
 
 // parametrien kirjoitustapa selaimessa : http://localhost:3000/api/newgame
-app.post('/api/newgame', function (req, res) {
+app.post('/api/newgame',
+    /**
+     * Lisää peli
+     */
+    function (req, res) {
   console.log("Got a POST request for the homepage");
   const query = util.promisify(con.query).bind(con);
   let jsonOBJ = req.body;
@@ -557,6 +593,10 @@ let server = app.listen(port, function () {
 
   console.log("Example app listening at http://%s:%s", host, port)
 });
+
+/**
+ * Tarkista Clientiltä saadut syötteet
+ */
 function textInputCheck(inputtxt)
 //Tekstisyötteen tarkistus
 {
