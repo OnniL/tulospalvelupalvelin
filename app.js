@@ -9,6 +9,9 @@ const request = require('request');
 let app = express();
 let url = require('url');
 let util = require('util');
+let bcrypt = require('bcrypt');
+const saltRounds = 10;
+let hashedPw;
 
 let mysql = require('mysql');
 let con = mysql.createConnection({
@@ -144,7 +147,11 @@ if(textInputCheck(group) === true && textInputCheck(password) === true) {
       string = JSON.stringify(rows);
       alteredResult = '{"numOfRows":' + rows.length + ',"rows":' + string + '}';
       console.log(rows);
-      res.send(alteredResult);
+      bcrypt.compare(password, hashedPw, function(err, res) {
+        console.log('Salasana oikein');
+        res.send(alteredResult);
+      });
+
 
     } catch (err) {
       console.log("Database error!" + err);
@@ -268,7 +275,8 @@ app.post('/api/newgroup',
           }
         }
         if (equals === false) {
-          sqlquery = "INSERT INTO ryhmat (nimi, salasana) VALUES (?, ?)"
+          hashedPw = await bcrypt.hash(jsonOBJ.salasana, saltRounds);
+          sqlquery = "INSERT INTO ryhmat (nimi, hashedPw) VALUES (?, ?)"
           await query(sqlquery, [jsonOBJ.nimi, jsonOBJ.salasana]);
           res.send("Post successful" + req.body);
         } else {
@@ -373,6 +381,39 @@ app.post('/api/newgame',
             + " p10 = p10 + ?, p11 = p11 + ?, p12 = p12 + ? "
             + "WHERE pelaajaid = ?";
 
+        // const pelaajat = [
+        //     "pelaaja1",
+        //     "pelaaja2",
+        //     "pelaaja3",
+        //     "pelaaja4",
+        //     "pelaaja5",
+        //     "pelaaja6",
+        //     "pelaaja7",
+        //     "pelaaja8",
+        //     "pelaaja9",
+        //     "pelaaja10"
+        // ];
+
+        // const points = ["p1","p2","p3","p4","p5","p6","p7","p8","p9","p10","p11","p12"];
+
+        // for (const playerID in pelaajat) {
+        //   const queryParamArr = [
+        //       ...points.reduce((acc,cur) => [...acc, jsonOBJ[playerID][cur]], []),
+        //       pelaajaid[0].pelaajaid
+        //   ];
+
+        //   if (jsonOBJ[playerID].nimi !== "") {
+        //     sqlquery = "SELECT pelaajaid FROM pelaajat WHERE nimi = ? and ryhmaid = ?";
+        //     pelaajaid = await query(sqlquery, [jsonOBJ[playerID].nimi, ryhmaid[0].ryhmaid]);
+        //     if (voittajaid[0].pelaajaid === pelaajaid[0].pelaajaid) {
+        //       console.log("p1voitto");
+        //       await query(sqlqueryVoitto, queryParamArr);
+        //     } else {
+        //       console.log("p1häviö");
+        //       await query(sqlqueryHavio, queryParamArr);
+        //     }
+        //   }
+        // }
 
         if (jsonOBJ.pelaaja1.nimi !== "") {
           sqlquery = "SELECT pelaajaid FROM pelaajat WHERE nimi = ? and ryhmaid = ?";
